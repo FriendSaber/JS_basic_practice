@@ -1,29 +1,23 @@
 'use strict';
 
-module.exports = function createUpdatedCollection(collectionA, objectB) {
-  var arr = new Array();
-
-  for (var i = 0; i < collectionA.length; i++){
-
-    for(var j=0;j<objectB.value.length;j++){
-      if(collectionA[i].key===objectB.value[j]){
-
-        if(objectB.value[j]==="a"||objectB.value[j]==="d"){
-          collectionA[i].count=collectionA[i].count-1;
-        }
-        if(objectB.value[j]==="e"){
-          collectionA[i].count=collectionA[i].count-2;
-        }
-        if(objectB.value[j]==="f"){
-          collectionA[i].count=collectionA[i].count-3;
-        }
-
-        break;
+function includes(collection , ch){
+    for(let item of collection){
+      if(item === ch){
+        return true;
       }
-
     }
-    arr.push({key:collectionA[i].key,count:collectionA[i].count});
-  }
+    return false;
+}
 
-  return arr;
+module.exports = function createUpdatedCollection(collectionA, objectB) {
+    let result = [];
+    for(let item of collectionA){
+      let key = item.key;
+      let count = item.count;
+      if(includes( objectB.value , item.key)){
+        count =count - Math.floor(count/3);
+      }
+      result.push({key , count});
+    }
+    return result;
 }

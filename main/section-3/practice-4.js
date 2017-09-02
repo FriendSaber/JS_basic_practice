@@ -1,58 +1,78 @@
 'use strict';
-var CountTotal = function (collectionA) {
-  var str = new Array();
-  str.push({key: collectionA[0], count: 1});
 
-  for (var i = 1; i < collectionA.length; i++){
-    var flag =0;
-    var student = new Object();//中间转换量
-    for(var j=0;j<str.length;j++){
-      if(collectionA[i]===str[j].key){//或者collection[i].charAt(0)===arr[j].key
-        str[j].count++;
-        flag=1;
-      }
+
+function split(item){
+  let array = item.split('-');
+  return {key:array[0] , count:parseInt(array[1],10)};
+}
+
+
+function push(result,key,count){
+  for (var i = 0; i < count; i++) {
+    result.push(key);
+  }
+}
+
+function expend(collection){
+  let result = [];
+  for(let item of collection){
+    if(item.length === 1){
+      result.push(item);
     }
-    if(flag==0){
-      student.key=collectionA[i].charAt(0);
-      if(collectionA[i].charAt(0)==='d')
-        student.count=5;
-      else
-        student.count=1;
-      str.push(student);
+    else{
+      let {key, count} = split(item);
+      push(result,key,count);
     }
   }
+  return result;
+}
 
-  return str;
-};
-var CountNTotal = function (collectionA, objectB) {
-  var arr = new Array();
-
-  var str = CountTotal(collectionA);
-
-  for (var i = 0; i < str.length; i++){
-
-    for(var j=0;j<objectB.value.length;j++){
-      if(str[i].key===objectB.value[j]){
-
-        if(objectB.value[j]==="a"||objectB.value[j]==="d"){
-          str[i].count=str[i].count-1;
-        }
-        if(objectB.value[j]==="e"){
-          str[i].count=str[i].count-2;
-        }
-        if(objectB.value[j]==="f"){
-          str[i].count=str[i].count-3;
-        }
-
-        break;
-      }
-
+function  find(collection,ch){
+  for(let item of collection){
+    if(item.key === ch){
+      return item;
     }
-    arr.push({key:str[i].key,count:str[i].count});
   }
+  return null;
+}
 
-  return arr;
-};
+function  summarrize(collection){
+  var result = [];
+  for(let item  of collection){
+    let obj = find(result,item);
+    if(obj){
+      obj.count++;
+    }else{
+      result.push({key:item,count:1});
+    }
+  }
+  return result;
+}
+
+function includes(collection , ch){
+  for(let item of collection){
+    if(item === ch){
+      return true;
+    }
+  }
+  return false;
+}
+
+function  discount(collection , promotionItems){
+  let result = [];
+  for(let item of collection){
+    let key = item.key;
+    let count = item.count;
+    if(includes( promotionItems , item.key)){
+      count =count - Math.floor(count/3);
+    }
+    result.push({key , count});
+  }
+  return result;
+}
+
 module.exports = function createUpdatedCollection(collectionA, objectB) {
-  return CountNTotal(collectionA, objectB);
+  let expanedArray= expend(collectionA);
+  let summarized = summarrize(expanedArray);
+    return discount(summarized , objectB.value);
 }
